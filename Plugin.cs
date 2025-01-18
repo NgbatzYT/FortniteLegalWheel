@@ -1,4 +1,4 @@
-﻿using BepInEx;
+using BepInEx;
 using GorillaTag.CosmeticSystem;
 using Photon.Pun;
 using Photon.Voice.Unity;
@@ -124,45 +124,42 @@ namespace FortniteEmoteWheel
         public static GameObject Kyle;
         public static float emoteTime;
 
-        private static int PreviousSerializationRate = -1;
-
         public static Vector3 archivePosition;
 
         public static void Emote(string emoteName, string emoteSound, float animationTime = -1f, bool looping = false)
         {
-            if (Kyle != null)
-                UnityEngine.Object.Destroy(Kyle);
-
-            GorillaTagger.Instance.offlineVRRig.enabled = false;
-            DisableCosmetics();
-
-            PreviousSerializationRate = PhotonNetwork.SerializationRate;
-            PhotonNetwork.SerializationRate *= 3;
-
-            Play2DAudio(LoadSoundFromResource("play"), 0.5f);
-
-            archivePosition = GorillaTagger.Instance.transform.position;
-            GorillaLocomotion.Player.Instance.rightControllerTransform.parent.rotation *= Quaternion.Euler(0f, 180f, 0f);
-
-            Kyle = LoadAsset("Rig"); 
-            Kyle.transform.position = GorillaTagger.Instance.offlineVRRig.transform.Find("RigAnchor/rig/body").position - new Vector3(0f, 1.15f, 0f);
-            Kyle.transform.rotation = GorillaTagger.Instance.offlineVRRig.transform.Find("RigAnchor/rig/body").rotation;
-
-            Kyle.transform.Find("KyleRobot/RobotKile").gameObject.GetComponent<Renderer>().renderingLayerMask = 0;
-
-            Animator KyleRobot = Kyle.transform.Find("KyleRobot").GetComponent<Animator>();
-            KyleRobot.enabled = true;
-            
-            AnimationClip Animation = null;
-            foreach (AnimationClip Clip in KyleRobot.runtimeAnimatorController.animationClips)
+            if(NetworkSystem.instance.GameModeString.Contains("MODDED") && NetworkSystem.instance.InRoom)
             {
-                if (Clip.name == emoteName)
+                if (Kyle != null)
+                    UnityEngine.Object.Destroy(Kyle);
+
+                GorillaTagger.Instance.offlineVRRig.enabled = false;
+                DisableCosmetics();
+
+                Play2DAudio(LoadSoundFromResource("play"), 0.5f);
+
+                archivePosition = GorillaTagger.Instance.transform.position;
+                GorillaLocomotion.Player.Instance.rightControllerTransform.parent.rotation *= Quaternion.Euler(0f, 180f, 0f);
+
+                Kyle = LoadAsset("Rig"); 
+                Kyle.transform.position = GorillaTagger.Instance.offlineVRRig.transform.Find("RigAnchor/rig/body").position - new Vector3(0f, 1.15f, 0f);
+                Kyle.transform.rotation = GorillaTagger.Instance.offlineVRRig.transform.Find("RigAnchor/rig/body").rotation;
+
+                Kyle.transform.Find("KyleRobot/RobotKile").gameObject.GetComponent<Renderer>().renderingLayerMask = 0;
+
+                Animator KyleRobot = Kyle.transform.Find("KyleRobot").GetComponent<Animator>();
+                KyleRobot.enabled = true;
+            
+                AnimationClip Animation = null;
+                foreach (AnimationClip Clip in KyleRobot.runtimeAnimatorController.animationClips)
                 {
-                    Animation = Clip;
-                    break;
+                    if (Clip.name == emoteName)
+                    {
+                        Animation = Clip;
+                        break;
+                    }
                 }
             }
-
             Animation.wrapMode = looping ? WrapMode.Loop : WrapMode.Default;
             KyleRobot.Play(Animation.name);
 
@@ -177,6 +174,10 @@ namespace FortniteEmoteWheel
             }
 
             emoteTime = Time.time + (animationTime > 0f ? animationTime : Animation.length) + (looping ? 999999999999999f : 0);
+        }
+        else
+        {
+            Debug.Log("You not in room stinky!")
         }
 
         public static Vector3 World2Player(Vector3 world)
@@ -222,9 +223,6 @@ namespace FortniteEmoteWheel
                 {
                     GorillaTagger.Instance.offlineVRRig.enabled = true;
                     EnableCosmetics();
-
-                    if (PreviousSerializationRate > 0)
-                        PhotonNetwork.SerializationRate = PreviousSerializationRate;
 
                     UnityEngine.Object.Destroy(Kyle);
 
