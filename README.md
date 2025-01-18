@@ -1,5 +1,8 @@
-# FortniteEmoteWheel
+# FortniteLegalWheel
 The emote wheel from Fortnite, directly ported to Gorilla Tag.
+
+The legal version of iidk's FortniteEmoteWheel.
+
 <img src="https://i.imgur.com/E2mRwj9.png">
 
 ---
@@ -14,7 +17,7 @@ The emote wheel from Fortnite, directly ported to Gorilla Tag.
 
 # Installation
 
-- Download the release from [here](https://github.com/iiDk-the-actual/FortniteEmoteWheel/releases/latest)
+- Download the release from [here](https://github.com/NgbatzYT/FortniteLegalWheel/releases/latest)
 - Drag the file `FortniteEmoteWheel.dll` to your plugins folder
 - Start Gorilla Tag if needed
 
